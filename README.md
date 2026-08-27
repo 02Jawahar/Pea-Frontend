@@ -126,7 +126,8 @@ it will not white-screen.
 
 ### nginx
 
-`nginx.conf` handles the three things a React Router SPA needs in production:
+`nginx.conf.template` handles the three things a React Router SPA needs in
+production:
 
 - unmatched paths fall back to `index.html`, so refreshing on
   `/exam-admin/dashboard` does not 404
@@ -135,6 +136,19 @@ it will not white-screen.
   bundle whose assets have already been replaced
 
 `/healthz` returns `200 ok` for health probes.
+
+### Port
+
+The container listens on **`$PORT`, defaulting to 80**. The nginx image runs
+`envsubst` over the template at startup, so no rebuild is needed to change it:
+
+```bash
+docker run --rm -e PORT=3000 -p 3000:3000 pea-frontend
+```
+
+Set this to whatever your host expects. A **502 / bad gateway** from a reverse
+proxy nearly always means the proxy is forwarding to a port the container is not
+listening on.
 
 ---
 
@@ -146,7 +160,11 @@ it will not white-screen.
 3. **Build args** — add `VITE_API_BASE_URL` (and `VITE_APP_NAME` if you want a
    different label) under *Build Arguments*. These must be build args; setting
    them as runtime environment variables has no effect on a Vite bundle.
-4. **Port** — the container listens on **80**.
+4. **Port** — set the application port to **80**, which is what the container
+   listens on by default. If you would rather keep Dokploy's default of 3000,
+   add `PORT=3000` under *Environment* instead and leave the port field alone —
+   nginx reads it at startup. A mismatch here is what produces a **bad gateway**
+   page.
 5. **Domain** — add your domain and enable HTTPS. Dokploy's Traefik proxy
    terminates TLS in front of nginx.
 6. **Deploy.** Subsequent pushes to `main` redeploy if you enable auto-deploy.
