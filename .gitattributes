@@ -1,0 +1,12 @@
+# Normalise line endings so the Linux Docker build gets LF regardless of the
+# machine the commit was made on.
+* text=auto eol=lf
+
+# Binary assets must never be normalised.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary

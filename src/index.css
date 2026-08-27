@@ -1,0 +1,140 @@
+@import 'tailwindcss';
+
+/*
+ * PEA e-Exam design tokens — taken verbatim from 00-README.md "Design tokens".
+ * Colours are exposed to Tailwind as `navy-900`, `green-600`, `grey-050`, etc.
+ */
+@theme {
+  --color-navy-900: #0f2a5c;
+  --color-navy-800: #14356f;
+  --color-navy-700: #1a4a8f;
+  --color-blue-500: #1a56a8;
+  --color-blue-100: #dbeafe;
+  --color-blue-050: #eff6ff;
+  --color-green-600: #1b7a3d;
+  --color-green-100: #d6f0de;
+  --color-green-050: #f0faf3;
+  --color-amber-500: #e08a00;
+  --color-amber-100: #fdeccc;
+  --color-amber-050: #fffaf0;
+  --color-red-600: #c0392b;
+  --color-red-100: #f8d7d3;
+  --color-red-050: #fdf2f1;
+  --color-purple-600: #6b3fa0;
+  --color-purple-100: #e5daf5;
+  --color-purple-050: #f6f2fc;
+  --color-grey-050: #f5f7fa;
+  --color-grey-100: #eef1f6;
+  --color-grey-200: #e3e8ef;
+  --color-grey-300: #cbd3e0;
+  --color-grey-600: #5a6b85;
+  --color-grey-700: #3f4d64;
+
+  --font-sans:
+    system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --radius-card: 10px;
+
+  /* Soft, modern elevation — used on hover and for floating surfaces only. */
+  --shadow-card: 0 1px 2px rgb(15 42 92 / 0.04), 0 1px 3px rgb(15 42 92 / 0.06);
+  --shadow-lift: 0 2px 4px rgb(15 42 92 / 0.05), 0 8px 20px rgb(15 42 92 / 0.08);
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    /* 14px base per the spec's type scale. */
+    @apply bg-grey-050 font-sans text-[14px] text-navy-900 antialiased;
+  }
+
+  /* Accessibility: A- / A / A+ writes --font-scale onto <html>; contrast toggle sets a class. */
+  html {
+    font-size: calc(16px * var(--font-scale, 1));
+  }
+
+  html.high-contrast {
+    --color-grey-600: #26324a;
+    --color-grey-200: #94a3b8;
+    --color-grey-050: #ffffff;
+  }
+
+  html.high-contrast body {
+    @apply bg-white;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-navy-700;
+  }
+}
+
+@layer components {
+  /* Section label: 12px uppercase letter-spaced grey-600, used above every card group. */
+  .label-caps {
+    @apply text-[12px] font-semibold uppercase tracking-[0.06em] text-grey-600;
+  }
+
+  /*
+   * Card: 10px radius, 1px grey-200 border, no shadow at rest, no accent stripes.
+   * `h-full` so cards in a grid row stretch to the same height — that is what
+   * keeps a dashboard from ending in ragged white gaps.
+   */
+  .card {
+    @apply overflow-hidden rounded-[10px] border border-grey-200 bg-white transition-shadow;
+  }
+
+  .card-interactive:hover {
+    box-shadow: var(--shadow-lift);
+  }
+
+  /* Long values must never push a card wider than its grid cell. */
+  .clamp-1 {
+    @apply overflow-hidden text-ellipsis whitespace-nowrap;
+  }
+
+  .clamp-2 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .page-title {
+    @apply text-[20px] leading-tight font-semibold tracking-[-0.01em] text-navy-900;
+  }
+
+  /* Every page body uses this so vertical rhythm is identical everywhere. */
+  .page {
+    @apply flex min-h-full flex-col gap-4;
+  }
+
+  /* A grid row whose cards stretch to equal height. */
+  .grid-stretch {
+    @apply grid items-stretch gap-4;
+  }
+
+  .field-label {
+    @apply mb-1 block text-[13px] font-medium text-grey-700;
+  }
+
+  .field-input {
+    @apply block w-full rounded-md border border-grey-300 bg-white px-3 py-2 text-[14px] text-navy-900
+      placeholder:text-grey-600/60 focus:border-navy-700 focus:ring-2 focus:ring-navy-700/20
+      disabled:cursor-not-allowed disabled:bg-grey-100 disabled:text-grey-600;
+  }
+
+  /* Table body is 13px per the spec. */
+  .data-cell {
+    @apply px-4 py-2.5 text-[13px] text-navy-900;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

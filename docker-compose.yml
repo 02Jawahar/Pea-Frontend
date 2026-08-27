@@ -1,0 +1,14 @@
+# Dokploy can deploy straight from the Dockerfile; this compose file is for
+# building and running the same image locally so you can check it before pushing.
+services:
+  web:
+    build:
+      context: .
+      args:
+        # Vite inlines these at build time — change them and rebuild.
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000/api}
+        VITE_APP_NAME: ${VITE_APP_NAME:-PEA}
+    image: pea-frontend:local
+    ports:
+      - '8080:80'
+    restart: unless-stopped
