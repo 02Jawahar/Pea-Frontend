@@ -1,20 +1,14 @@
+import puducherryEmblem from '@/assets/puducherry-emblem.png'
 import { cn } from '@/utils/cn'
 
-/**
- * State emblem placeholder. Drawn inline so the app stays self-contained —
- * swap for the official artwork before UAT.
- */
 export function Emblem({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 48 56" className={cn('size-9', className)} aria-hidden="true">
-      <g fill="currentColor">
-        <circle cx="24" cy="12" r="5" />
-        <path d="M13 20h22l-3 5H16z" />
-        <path d="M10 27h28l-4 12H14z" opacity="0.85" />
-        <path d="M17 41h14l-2 6H19z" opacity="0.7" />
-        <rect x="7" y="49" width="34" height="2.5" rx="1.25" />
-      </g>
-    </svg>
+    <img
+      src={puducherryEmblem}
+      alt=""
+      aria-hidden="true"
+      className={cn('h-10 w-auto shrink-0 object-contain brightness-0 invert', className)}
+    />
   )
 }
 
