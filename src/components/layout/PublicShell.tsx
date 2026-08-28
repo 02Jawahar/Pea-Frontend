@@ -131,7 +131,7 @@ export function PublicShell({
                 { label: 'Home', to: ROUTES.HOME },
                 { label: 'Track Application', to: ROUTES.TRACK_APPLICATION },
                 { label: 'Track Grievance', to: ROUTES.TRACK_GRIEVANCE },
-                { label: 'Staff Login', to: ROUTES.LOGIN },
+                { label: 'PEA Login', to: ROUTES.LOGIN },
               ].map((item) => (
                 <li key={item.to}>
                   <NavLink

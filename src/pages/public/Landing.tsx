@@ -1,6 +1,7 @@
 import {
   ArrowRight,
   BadgeCheck,
+  BriefcaseBusiness,
   CalendarClock,
   FileSearch,
   Gauge,
@@ -16,10 +17,13 @@ import { Banner, Button, Card } from '@/components/common/primitives'
 import { SkeletonCards } from '@/components/common/states'
 import { ROUTES } from '@/constants/routes'
 import { useAsync } from '@/hooks/useAsync'
-import { api } from '@/mock/api'
+import { useAuth } from '@/hooks/useAuth'
+import { api, seed } from '@/mock/api'
 
 export default function Landing() {
   const { data: notifications, isLoading } = useAsync(() => api.notifications(), 'notifications')
+  const { data: posts, isLoading: postsLoading } = useAsync(() => api.posts(), 'public-posts')
+  const { candidate } = useAuth()
   const published = (notifications ?? []).filter((item) => item.status === 'Published')
 
   return (
@@ -54,9 +58,110 @@ export default function Landing() {
         </div>
       </section>
 
+      <section aria-labelledby="job-notifications-heading" className="space-y-3">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="flex items-center gap-1.5 text-[12px] font-semibold tracking-[0.12em] text-green-700 uppercase">
+              <BriefcaseBusiness className="size-4" />
+              Recruitment opportunities
+            </p>
+            <h2
+              id="job-notifications-heading"
+              className="text-navy-900 mt-1 text-[22px] font-semibold"
+            >
+              Job Notifications
+            </h2>
+            <p className="text-grey-600 mt-0.5 text-[13px]">
+              Browse available Government posts, check the job details and sign in or register to
+              apply.
+            </p>
+          </div>
+          <span className="bg-green-050 rounded-full px-3 py-1.5 text-[12px] font-semibold text-green-700">
+            {(posts ?? []).length} jobs available
+          </span>
+        </div>
+
+        {postsLoading ? (
+          <SkeletonCards count={3} />
+        ) : (
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {(posts ?? []).map((post) => {
+              const department = seed.departments.find((item) => item.id === post.departmentId)
+              const notification = published.find((item) =>
+                item.departmentNames.includes(department?.name ?? ''),
+              )
+              const vacancy = seed.vacancies.find((item) => item.postId === post.id)
+              const applyTo = ROUTES.CANDIDATE_APPLY(post.id)
+
+              return (
+                <article key={post.id} className="card flex flex-col overflow-hidden">
+                  <div className="flex-1 p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="text-grey-600 font-mono text-[11px]">{post.code}</p>
+                        <h3 className="text-navy-900 mt-0.5 text-[16px] font-semibold">
+                          {post.name}
+                        </h3>
+                        <p className="text-grey-600 mt-0.5 text-[12px]">{department?.name}</p>
+                      </div>
+                      <span className="bg-green-050 shrink-0 rounded-full px-2 py-1 text-[11px] font-semibold text-green-700">
+                        Applications open
+                      </span>
+                    </div>
+
+                    <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 text-[13px]">
+                      <Meta label="Vacancies" value={String(post.availableStrength)} />
+                      <Meta label="Pay level" value={post.payLevel} />
+                      <Meta label="Classification" value={post.classification} />
+                      <Meta label="Age limit" value={post.ageLimit} />
+                    </dl>
+
+                    <p className="border-grey-200 text-grey-600 mt-4 flex items-center gap-1.5 border-t pt-3 text-[12px]">
+                      <CalendarClock className="text-navy-700 size-3.5" />
+                      Last date:{' '}
+                      <span className="text-navy-900 font-medium">
+                        {notification?.lastDate ?? vacancy?.lastDate ?? '—'}
+                      </span>
+                    </p>
+                  </div>
+
+                  <div className="border-grey-200 bg-grey-050 flex flex-wrap gap-2 border-t p-3">
+                    <Link
+                      className="min-w-0 flex-1"
+                      to={candidate ? applyTo : ROUTES.CANDIDATE_LOGIN}
+                      state={candidate ? undefined : { from: applyTo }}
+                    >
+                      <Button size="sm" className="w-full">
+                        {candidate ? 'Apply Now' : 'Login to Apply'}
+                        <ArrowRight className="size-3.5" />
+                      </Button>
+                    </Link>
+                    {!candidate && (
+                      <Link to={ROUTES.REGISTER} state={{ from: applyTo }}>
+                        <Button size="sm" variant="secondary">
+                          <UserPlus className="size-3.5" />
+                          Register
+                        </Button>
+                      </Link>
+                    )}
+                    {notification && (
+                      <Link to={ROUTES.NOTIFICATION(notification.id)}>
+                        <Button size="sm" variant="ghost">
+                          Details
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
+                </article>
+              )
+            })}
+          </div>
+        )}
+      </section>
+
       <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <Card
-          title="Active Notifications"
+          title="Official Recruitment Notifications"
           action={
             <span className="text-[12px] text-grey-600">
               {published.length} open for application

@@ -1,6 +1,6 @@
 import { BadgeCheck, ChevronLeft, ChevronRight, Download, Info, ShieldAlert } from 'lucide-react'
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 import { DocumentUpload, type UploadedDoc } from '@/components/common/DocumentUpload'
 import { OtpModal } from '@/components/common/OtpModal'
@@ -124,6 +124,9 @@ export default function Register() {
   const [registrationNo, setRegistrationNo] = useState<string | null>(null)
   const { loginAsCandidate } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  const redirectTo =
+    (location.state as { from?: string } | null)?.from ?? ROUTES.CANDIDATE_DASHBOARD
 
   const set = (patch: Partial<FormState>) => {
     setForm((previous) => ({ ...previous, ...patch }))
@@ -189,7 +192,7 @@ export default function Register() {
   if (registrationNo) {
     return <RegistrationReceipt registrationNo={registrationNo} name={form.fullName} onContinue={() => {
       loginAsCandidate('')
-      navigate(ROUTES.CANDIDATE_DASHBOARD)
+      navigate(redirectTo)
     }} />
   }
 
