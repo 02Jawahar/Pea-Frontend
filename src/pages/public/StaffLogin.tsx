@@ -1,4 +1,4 @@
-import { Building2, ChevronRight, KeyRound, ShieldCheck, Users } from 'lucide-react'
+import { ChevronRight, KeyRound, ShieldCheck, Users } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -112,13 +112,6 @@ export default function StaffLogin() {
   const { loginAsStaff } = useAuth()
   const navigate = useNavigate()
 
-  const selectedGroup = STAFF_GROUPS.find((group) => group.id === activeGroup)
-  const selectedUsers = selectedGroup
-    ? seed.staffUsers.filter((user) =>
-        user.roleIds.some((roleId) => selectedGroup.roles.includes(roleId)),
-      )
-    : []
-
   function begin(value: string) {
     const trimmed = value.trim()
     if (!trimmed) {
@@ -212,7 +205,7 @@ export default function StaffLogin() {
             can appear in more than one module where their role spans multiple responsibilities.
           </p>
 
-          <div className="grid gap-3 p-4 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid items-start gap-3 p-4 sm:grid-cols-2 xl:grid-cols-3">
             {STAFF_GROUPS.map((group, index) => {
               const users = seed.staffUsers.filter((user) =>
                 user.roleIds.some((roleId) => group.roles.includes(roleId)),
@@ -221,139 +214,137 @@ export default function StaffLogin() {
               const expanded = activeGroup === group.id
 
               return (
-                <button
+                <article
                   key={group.id}
-                  type="button"
-                  aria-expanded={expanded}
-                  aria-controls="selected-module-users"
-                  onClick={() => setActiveGroup(expanded ? null : group.id)}
                   className={cn(
-                    'group flex min-h-40 flex-col rounded-lg border p-4 text-left transition-all',
+                    'overflow-hidden rounded-lg border transition-all',
                     expanded
-                      ? 'border-navy-700 bg-navy-900 text-white shadow-sm'
-                      : 'border-grey-200 bg-white hover:border-navy-700 hover:bg-blue-050',
+                      ? 'col-span-full border-navy-700 bg-navy-900 shadow-sm'
+                      : 'border-grey-200 bg-white',
                   )}
                 >
-                  <span
+                  <button
+                    type="button"
+                    aria-expanded={expanded}
+                    aria-controls={`module-users-${group.id}`}
+                    onClick={() => setActiveGroup(expanded ? null : group.id)}
                     className={cn(
-                      'text-[22px] font-bold tabular-nums',
-                      expanded ? 'text-amber-400' : 'text-green-600',
+                      'group flex w-full flex-col p-4 text-left transition-colors',
+                      expanded
+                        ? 'min-h-32 bg-navy-900 text-white'
+                        : 'min-h-40 hover:bg-blue-050',
                     )}
                   >
-                    {String(index + 1).padStart(2, '0')}
-                  </span>
-                  <span
-                    className={cn(
-                      'mt-3 text-[15px] font-semibold',
-                      expanded ? 'text-white' : 'text-navy-900',
-                    )}
-                  >
-                    {group.name}
-                  </span>
-                  <span
-                    className={cn(
-                      'mt-1 text-[12px] leading-relaxed',
-                      expanded ? 'text-white/70' : 'text-grey-600',
-                    )}
-                  >
-                    {group.description}
-                  </span>
-                  <span className="mt-auto flex w-full items-center justify-between gap-2 pt-4 text-[12px] font-medium">
-                    <span className="flex items-center gap-1.5">
-                      <Users className="size-3.5" />
-                      {activeUsers} active account{activeUsers === 1 ? '' : 's'}
+                    <span
+                      className={cn(
+                        'text-[22px] font-bold tabular-nums',
+                        expanded ? 'text-amber-400' : 'text-green-600',
+                      )}
+                    >
+                      {String(index + 1).padStart(2, '0')}
                     </span>
-                    <ChevronRight
-                      className={cn('size-4 transition-transform', expanded && 'rotate-90')}
-                    />
-                  </span>
-                </button>
+                    <span
+                      className={cn(
+                        'mt-3 text-[15px] font-semibold',
+                        expanded ? 'text-white' : 'text-navy-900',
+                      )}
+                    >
+                      {group.name}
+                    </span>
+                    <span
+                      className={cn(
+                        'mt-1 text-[12px] leading-relaxed',
+                        expanded ? 'text-white/70' : 'text-grey-600',
+                      )}
+                    >
+                      {group.description}
+                    </span>
+                    <span className="mt-auto flex w-full items-center justify-between gap-2 pt-4 text-[12px] font-medium">
+                      <span className="flex items-center gap-1.5">
+                        <Users className="size-3.5" />
+                        {activeUsers} active account{activeUsers === 1 ? '' : 's'}
+                      </span>
+                      <ChevronRight
+                        className={cn('size-4 transition-transform', expanded && 'rotate-90')}
+                      />
+                    </span>
+                  </button>
+
+                  {expanded && (
+                    <div
+                      id={`module-users-${group.id}`}
+                      className="border-t border-white/15 bg-navy-900 p-4"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <p className="text-[12px] text-white/75">
+                          Select an officer to continue with OTP verification.
+                        </p>
+                        <span className="text-[12px] font-medium text-white/75">
+                          {users.length} account{users.length === 1 ? '' : 's'}
+                        </span>
+                      </div>
+
+                      <ul className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                        {users.map((user) => {
+                          const roles = user.roleIds.map((id) => ROLES[id])
+                          const department = seed.departments.find(
+                            (item) => item.id === user.departmentId,
+                          )
+
+                          return (
+                            <li key={user.id}>
+                              <button
+                                type="button"
+                                disabled={!user.isActive}
+                                onClick={() => begin(user.employeeId)}
+                                className={cn(
+                                  'flex h-full w-full items-start gap-3 rounded-md border border-white/20 bg-white p-3 text-left transition-colors',
+                                  user.isActive
+                                    ? 'hover:border-amber-500 hover:bg-blue-050'
+                                    : 'cursor-not-allowed opacity-55',
+                                )}
+                              >
+                                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-navy-900 text-[12px] font-semibold text-white">
+                                  {user.initials}
+                                </span>
+                                <span className="min-w-0 flex-1">
+                                  <span className="flex flex-wrap items-baseline gap-x-2">
+                                    <span className="text-[13px] font-semibold text-navy-900">
+                                      {user.name}
+                                    </span>
+                                    <span className="font-mono text-[11px] text-grey-600">
+                                      {user.employeeId}
+                                    </span>
+                                  </span>
+                                  <span className="mt-0.5 block text-[12px] text-grey-600">
+                                    {user.designation}
+                                    {department ? ` · ${department.name}` : ''}
+                                  </span>
+                                  <span className="mt-1 block text-[12px] font-medium text-navy-700">
+                                    {roles.map((role) => role.name).join(' · ')}
+                                  </span>
+                                  {!user.isActive && (
+                                    <span className="mt-1 block text-[11px] text-red-600">
+                                      Deactivated — {user.deactivationReason}
+                                    </span>
+                                  )}
+                                </span>
+                                {user.isActive && (
+                                  <ChevronRight className="mt-1 size-4 shrink-0 text-grey-600" />
+                                )}
+                              </button>
+                            </li>
+                          )
+                        })}
+                      </ul>
+                    </div>
+                  )}
+                </article>
               )
             })}
           </div>
 
-          {selectedGroup && (
-            <section
-              id="selected-module-users"
-              aria-label={`${selectedGroup.name} demo accounts`}
-              className="border-t border-grey-200 bg-grey-050"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
-                <div className="flex items-center gap-2">
-                  <span className="flex size-8 items-center justify-center rounded-md bg-navy-900 text-white">
-                    <Building2 className="size-4" />
-                  </span>
-                  <div>
-                    <h3 className="text-[14px] font-semibold text-navy-900">
-                      {selectedGroup.name}
-                    </h3>
-                    <p className="text-[12px] text-grey-600">
-                      Select an officer to continue with OTP verification
-                    </p>
-                  </div>
-                </div>
-                <span className="text-[12px] text-grey-600">
-                  {selectedUsers.length} account{selectedUsers.length === 1 ? '' : 's'}
-                </span>
-              </div>
-
-              <ul className="grid gap-3 border-t border-grey-200 p-4 sm:grid-cols-2">
-                {selectedUsers.map((user) => {
-                  const roles = user.roleIds.map((id) => ROLES[id])
-                  const department = seed.departments.find(
-                    (item) => item.id === user.departmentId,
-                  )
-
-                  return (
-                    <li key={user.id}>
-                      <button
-                        type="button"
-                        disabled={!user.isActive}
-                        onClick={() => begin(user.employeeId)}
-                        className={cn(
-                          'flex h-full w-full items-start gap-3 rounded-md border border-grey-200 bg-white p-3 text-left transition-colors',
-                          user.isActive
-                            ? 'hover:border-navy-700 hover:bg-blue-050'
-                            : 'cursor-not-allowed opacity-55',
-                        )}
-                      >
-                        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-navy-900 text-[12px] font-semibold text-white">
-                          {user.initials}
-                        </span>
-                        <span className="min-w-0 flex-1">
-                          <span className="flex flex-wrap items-baseline gap-x-2">
-                            <span className="text-[13px] font-semibold text-navy-900">
-                              {user.name}
-                            </span>
-                            <span className="font-mono text-[11px] text-grey-600">
-                              {user.employeeId}
-                            </span>
-                          </span>
-                          <span className="mt-0.5 block text-[12px] text-grey-600">
-                            {user.designation}
-                            {department ? ` · ${department.name}` : ''}
-                          </span>
-                          <span className="mt-1 block text-[12px] font-medium text-navy-700">
-                            {roles.map((role) => role.name).join(' · ')}
-                          </span>
-                          {!user.isActive && (
-                            <span className="mt-1 block text-[11px] text-red-600">
-                              Deactivated — {user.deactivationReason}
-                            </span>
-                          )}
-                        </span>
-                        {user.isActive && (
-                          <ChevronRight className="mt-1 size-4 shrink-0 text-grey-600" />
-                        )}
-                      </button>
-                    </li>
-                  )
-                })}
-              </ul>
-            </section>
-          )}
-
-          {!selectedGroup && (
+          {!activeGroup && (
             <div className="border-t border-grey-200 bg-grey-050 px-4 py-3 text-center text-[12px] text-grey-600">
               Choose a module block above to view its officers.
             </div>
