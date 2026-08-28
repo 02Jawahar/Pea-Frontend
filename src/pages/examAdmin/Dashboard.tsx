@@ -5,6 +5,7 @@ import {
   ClipboardCheck,
   FileText,
   IdCard,
+  Languages,
   MapPin,
   Monitor,
   Plus,
@@ -220,6 +221,7 @@ export default function ExamAdminDashboard() {
           <QuickActions
             actions={[
               { label: 'Create New Exam', icon: Plus, to: ROUTES.EA_EXAMS, permission: 'exam.create', tone: 'blue' },
+              { label: 'Applicant Languages', icon: Languages, to: ROUTES.EA_LANGUAGE_MAPPING, permission: 'exam.view', tone: 'navy' },
               { label: 'Manage Centers', icon: MapPin, to: ROUTES.EA_CENTRES, permission: 'centre.view', tone: 'green' },
               { label: 'Upload Question Paper', icon: Upload, to: ROUTES.EA_PAPERS, permission: 'paper.manage', tone: 'purple' },
               { label: 'Hall Management', icon: Building2, to: ROUTES.EA_SEATING, permission: 'seating.view', tone: 'amber' },

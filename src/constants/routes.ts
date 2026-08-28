@@ -53,6 +53,7 @@ export const ROUTES = {
   EA_NOTIFICATION_PUBLISH: (id = ':id') => `/exam-admin/notifications/${id}/publish`,
   EA_EXAMS: '/exam-admin/exams',
   EA_EXAM: (id = ':id') => `/exam-admin/exams/${id}`,
+  EA_LANGUAGE_MAPPING: '/exam-admin/language-mapping',
   EA_SEATING: '/exam-admin/seating',
   EA_CENTRES: '/exam-admin/centres',
   EA_FUNCTIONARIES: '/exam-admin/functionaries',

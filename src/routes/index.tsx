@@ -65,6 +65,7 @@ const ExamAdminNotifications = lazy(() => import('@/pages/examAdmin/Notification
 const NotificationPublish = lazy(() => import('@/pages/examAdmin/NotificationPublish'))
 const ManageExaminations = lazy(() => import('@/pages/examAdmin/Exams'))
 const ExamDetail = lazy(() => import('@/pages/examAdmin/ExamDetail'))
+const ApplicantLanguageMapping = lazy(() => import('@/pages/examAdmin/LanguageMapping'))
 const ExamCentres = lazy(() => import('@/pages/examAdmin/Centres'))
 const SeatingChart = lazy(() => import('@/pages/examAdmin/Seating'))
 const FunctionaryManagement = lazy(() => import('@/pages/examAdmin/Functionaries'))
@@ -253,6 +254,7 @@ export const router = createBrowserRouter([
             children: [
               { path: ROUTES.EA_EXAMS, element: <ManageExaminations /> },
               { path: ROUTES.EA_EXAM(), element: <ExamDetail /> },
+              { path: ROUTES.EA_LANGUAGE_MAPPING, element: <ApplicantLanguageMapping /> },
             ],
           },
           {

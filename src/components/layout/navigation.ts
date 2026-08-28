@@ -23,6 +23,7 @@ import {
   LayoutDashboard,
   LifeBuoy,
   ListChecks,
+  Languages,
   MapPin,
   Medal,
   Monitor,
@@ -135,6 +136,7 @@ export const PORTAL_NAV: Record<PortalId, NavGroup[]> = {
       label: 'Exam Management',
       items: [
         { label: 'Manage Examinations', to: ROUTES.EA_EXAMS, icon: CalendarDays, permission: 'exam.view', end: true },
+        { label: 'Applicant Languages', to: ROUTES.EA_LANGUAGE_MAPPING, icon: Languages, permission: 'exam.view' },
         { label: 'Exam Centres', to: ROUTES.EA_CENTRES, icon: MapPin, permission: 'centre.view' },
         { label: 'Hall & Seating', to: ROUTES.EA_SEATING, icon: Grid3x3, permission: 'seating.view' },
         { label: 'Invigilator Management', to: ROUTES.EA_FUNCTIONARIES, icon: Users, permission: 'functionary.view' },
